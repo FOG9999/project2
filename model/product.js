@@ -34,6 +34,10 @@ const Product = mongoose.Schema({
     category_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
+    },
+    sold: {
+        type: Number,
+        default: 0
     }
 })
 

@@ -21,6 +21,9 @@ const Customer = mongoose.Schema({
     city: {
         type: String,
         require: true
+    },
+    isUser: {
+        type: Boolean
     }
 })
 

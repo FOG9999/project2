@@ -8,7 +8,7 @@ module.exports = {
             if(err) console.error(err);
             if(data.length !== 0){
                 console.log(data);
-                done(null,"Category exsits");
+                done(null,{msg: "Category exsits"});
             }
             else {
                 let c = new Category({

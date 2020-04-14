@@ -5,30 +5,30 @@ module.exports = {
     create: function (new_product, done) {
         Product.find({ name: new_product.name }, (err, data) => {
             if (err) console.error(err);
-            if (!!data || data.length !== 0) {
-                done(null, "Product exsits");
+            if (data.length !== 0) {
+                console.log(data);
+                done(null, {msg: "Product exsits"});
             }
             else {
-                Category.findOne({ name: new_product.cate_name }, (err, data) => {
-                    if (err) console.error(err);
-                    if (!data || data.length === 0) {
-                        done(null, "No such category");
+                Category.findOne({ name: new_product.cate_name }, (error, dt) => {
+                    if (error) console.error(error);
+                    if (dt.length === 0) {                        
+                        done(null, {msg: "No such category"});
                     }
                     else {
+                        console.log("datacate: "+dt);
                         let p = new Product({
                             name: new_product.name,
-                            last_update: new_product.last_update,
+                            last_update: new Date(),
                             price: new_product.price,
                             detail: new_product.detail,
                             amount: new_product.amount,
-                            image1: img1,
-                            image2: img2,
-                            image3: img3,
-                            category_id: data.category_id
+                            image1: new_product.image1,
+                            category_id: dt._id
                         });
-                        p.save((err, data) => {
-                            if (err) console.error(err);
-                            done(null, data);
+                        p.save((errr, dta) => {
+                            if (errr) console.error(errr);
+                            done(null, dta);
                         })
                     }
                 })
@@ -59,22 +59,44 @@ module.exports = {
             if (err) console.error(err);
             Category.find({}, (error, dt) => {
                 if (error) console.error(error);
-                let cates = [], count = 0;
+                let cates = [];
                 for (let i = 0; i < data.length; i++) {
                     for (let j = 0; j < dt.length; j++) {
                         if (data[i].category_id.toString() === dt[j]._id.toString()) {
                             cates.push(dt[j].name);
-                            count++;
                         }
                     }
                 }
                 
-                if(count === 9) done(null, {
+                done(null, {
                     products: data,
                     cates: cates
                 });
             })
 
         })
+    },
+    deleteProduct: function(pro_name,done){
+        Product.findOneAndDelete({name: pro_name},(err,data)=>{
+            if(err) console.error(err);
+            done(null,data);
+        })
+    },
+    updateProduct: function(new_pro, id, cate_name, done){
+        Category.findOne({name: cate_name},(err,data)=>{
+            if(err) console.error(err);
+            Product.findByIdAndUpdate({_id: id},{
+                name: new_pro.name,
+                price: new_pro.price,
+                amount: new_pro.amount,
+                detail: new_pro.detail,
+                image1: new_pro.image1,
+                category_id: data._id,
+                last_update: new Date()
+            },(error,dt)=>{
+                if(error) console.error(error);
+                done(null,dt);
+            })
+        })        
     }
 }

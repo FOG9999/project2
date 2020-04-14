@@ -12,7 +12,13 @@ const Customer_order = mongoose.Schema({
     },
     customer_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer"
+        refPath: "onModel",
+        required: true
+    },
+    onModel: {
+        type: String,
+        required: true,
+        enum: ["User", "Customer"]
     }
 })
 
